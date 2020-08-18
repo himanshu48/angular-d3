@@ -17,8 +17,6 @@ export class WorldMapComponent implements OnInit {
   ngOnInit(): void {
     this.createSvg();
     this.drawChart();
-    // console.log(worldMap.objects.countries.geometries.map(e=>e.properties.name));
-    
   }
 
   private createSvg() {

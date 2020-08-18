@@ -17,8 +17,8 @@ export class PieChartComponent implements OnInit {
   ];
   private svg;
   private margin = 50;
-  private width = 750;
-  private height = 600;
+  private width = 450;
+  private height = 400;
   // The radius of the pie chart is half the smallest side
   private radius = Math.min(this.width, this.height) / 2 - this.margin;
   private colors;
@@ -27,6 +27,7 @@ export class PieChartComponent implements OnInit {
     this.createSvg();
     this.createColors();
     this.drawChart();
+    this.drawDoughnut();
   }
 
   private createSvg() {
@@ -48,7 +49,7 @@ export class PieChartComponent implements OnInit {
 
   private drawChart(): void {
     // Compute the position of each group on the pie:
-    const pie = d3.pie<any>().value((d: any) => Number(d.Stars));
+    let pie = d3.pie<any>().value((d: any) => Number(d.Stars));
 
     // Build the pie chart
     this.svg
@@ -66,7 +67,7 @@ export class PieChartComponent implements OnInit {
 
     // Add labels
     const labelLocation = d3.arc()
-      .innerRadius(100)
+      .innerRadius(30)
       .outerRadius(this.radius);
 
     this.svg
@@ -78,6 +79,74 @@ export class PieChartComponent implements OnInit {
       .attr("transform", d => "translate(" + labelLocation.centroid(d) + ")")
       .style("text-anchor", "middle")
       .style("font-size", 15);
+  }
+
+
+
+
+// doughnutChart
+  drawDoughnut(){
+    let data = [{name:'a',value:2},{name:'b',value:4},{name:'c',value:6},{name:'d',value:8}]
+    // var data = [2, 4, 8, 10];
+    let radius = 100;
+
+    let svg = d3.select("#doughnutChart")
+                .append("svg")
+                .attr('height',200)
+                .attr('width',200)
+    let g = svg.append("g").attr("transform", "translate(" + radius + "," + radius + ")");
+
+    var color = d3.scaleOrdinal(['#4daf4a','#377eb8','#ff7f00','#984ea3','#e41a1c']);
+
+    // Generate the pie
+    var pie = d3.pie<any>()
+                .startAngle(-0.5 * Math.PI)
+                .endAngle(0.5 * Math.PI)
+                .sort(null)
+                .value((d) => d.value);
+
+    // Generate the arcs
+    var arc = d3.arc<any>()
+                .innerRadius(60)
+                .outerRadius(radius);
+
+    //Generate groups
+    var arcs = g.selectAll("arc")
+                .data(pie(data))
+                .enter()
+                .append("g")
+                .attr("class", "arc")
+
+    //Draw arc paths
+    arcs.append("path")
+        .attr("fill", (d, i) => color(i.toString()) )
+        .attr("d", arc);
+
+     let titleLabel = svg
+        .append('text')
+        .text('title text')
+        .attr('id', 'title')
+        .attr('x', 100)
+        .attr('y', 80)
+        .style('font-size', '10px')
+        .style('text-anchor', 'middle');
+
+    let labels = g
+    .selectAll('allLabels')
+    .data(pie(data))
+    .enter()
+    .append('text')
+    .text((d, i) => 'label '+i )
+    .attr('transform', (d) => 'translate(' + arc.centroid(d) + ')' )
+    .style('font-size', '8px')
+    .style('text-anchor', 'middle');
+      
+  }
+
+  createColor(){
+    // this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    // Below is an example of using custom colors
+    // this.colorScale = d3.scaleOrdinal().domain([0,1,2,3]).range(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']);
   }
 
 }
