@@ -23,7 +23,7 @@ export class BarChartComponent implements OnInit {
   ngOnInit(): void {
     this.createSvg();
     this.drawBars(this.data);
-    // d3.json('https://api.jsonbin.io/b/5eee6a5397cb753b4d149343').then(data => this.drawBars(data));
+    this.drawLineChart();
   }
 
   private createSvg() {
@@ -69,6 +69,68 @@ export class BarChartComponent implements OnInit {
       .attr("width", x.bandwidth())
       .attr("height", (d) => this.height - y(d.Stars))
       .attr("fill", "#d04a35");
+  }
+
+  drawLineChart() { // copy css
+    let data = [
+      { year: 2010, value: 658 },
+      { year: 2011, value: 758 },
+      { year: 2012, value: 728 },
+      { year: 2013, value: 800 },
+      { year: 2014, value: 860 },
+      { year: 2015, value: 900 },
+      { year: 2016, value: 810 },
+    ]
+    let height = 400, width = 400;
+
+    let n = data.length;
+    let svg = d3.select("#lineChart")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", "translate(40,10)");
+
+
+    let xScale = d3.scaleBand<any>()
+    .range([0, width-20])
+    .domain(data.map(d => d.year))
+    .padding(0.4);
+
+    let yScale = d3.scaleLinear()
+      .domain([500, d3.max(data, d => d.value)])
+      .range([height-40, 0]);
+
+    let line = d3.line<any>()
+      .x((d, i) => xScale(d.year))
+      .y( d => yScale(d.value))
+      .curve(d3.curveMonotoneX)
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + (height-40) + ")")
+      .call(d3.axisBottom(xScale));
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(d3.axisLeft(yScale));
+
+    svg.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("fill", "none")
+      .attr("stroke", "#ffab00")
+      .attr("stroke-width", "3")
+      .attr("d", line);
+
+    svg.selectAll(".dot")
+      .data(data)
+      .enter().append("circle")
+      .attr("class", "dot")
+      .attr("fill", "#ffab00")
+      .attr("stroke", "#fff")
+      .attr("cx", d => xScale(d.year) )
+      .attr("cy", d => yScale(d.value) )
+      .attr("r", 5)
+
   }
 
 }

@@ -6,6 +6,7 @@ import { PieChartComponent } from './pie-chart/pie-chart.component';
 import { ScatterPlotComponent } from './scatter-plot/scatter-plot.component';
 import { WorldMapComponent } from './world-map/world-map.component';
 import { IndiaMapComponent } from './india-map/india-map.component';
+import { TreeChartComponent } from './tree-chart/tree-chart.component';
 
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
   {path:'bubble', component:BubbleMapComponent},
   {path:'indiamap', component:IndiaMapComponent},
   {path:'worldmap', component:WorldMapComponent},
+  {path:'tree', component:TreeChartComponent},
   {path:'**', component:BarChartComponent}
 ];
 

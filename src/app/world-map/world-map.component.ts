@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
+import { GeoPermissibleObjects } from 'd3';
 
 declare var require:any;
-const worldMap = require('../../assets/countries-10m.json');
+const worldMap = require('../../assets/map/countries-10m.json');
+const worldData = require('../../assets/data/worldHeatMapData.json');
 
 @Component({
   selector: 'app-world-map',
@@ -20,7 +22,7 @@ export class WorldMapComponent implements OnInit {
   }
 
   private createSvg() {
-    d3.selectAll("div#worldmap > *").remove();
+    // d3.selectAll("div#worldmap > *").remove();
     this.svg = d3.select("div#worldmap")
       .append("svg")
       .attr("viewBox", "0, 0, 960, 410")
@@ -46,47 +48,57 @@ export class WorldMapComponent implements OnInit {
           // .attr("stroke-linejoin", "round")
           .attr("d", path);
 
+    // data
+    let data = worldData.map(e=>{
+      const feature = <GeoPermissibleObjects>features.get(e.id);
+      return {
+        ...e,
+        position: feature && path.centroid(feature),
+      };
+    })
+
+    let radius = d3.scaleSqrt<any>()
+    .domain([0, d3.max(data, d => Number(d['value']))])
+    .range([0, 10]);
+
     const legend = this.svg.append("g")
           .attr("fill", "#777")
           .attr("transform", "translate(915,608)")
           .attr("text-anchor", "middle")
           .style("font", "10px sans-serif")
         .selectAll("g")
-          .data(44) // data
+          .data(radius.ticks(4).slice(1))
         .join("g");
+
+        legend.append("circle")
+        .attr("fill", "none")
+        .attr("stroke", "#ccc")
+        .attr("cy", d => -radius(d))
+        .attr("r", radius);
+
+        legend.append("text")
+          .attr("y", d => -2 * radius(d))
+          .attr("dy", "1.3em")
+          .text(radius.tickFormat(4, "s"));
+
+          this.svg.append("g")
+          .attr("fill", "brown")
+          .attr("fill-opacity", 0.5)
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 0.5)
+        .selectAll("circle")
+        .data(data
+            .filter(d => d.position)
+            .sort((a, b) => d3.descending(a.value, b.value)))
+        .join("circle")
+          .attr("transform", d => `translate(${d.position})`)
+          .attr("r", d => radius(d.value))
+        .append("title")
+          .text(d => `${d.country}
+    ${format(d.value)}`);
+
   }
 
-  // private createSvg() {
-  //   let margin = {
-  //     top: 50,
-  //     left: 50,
-  //     right: 50,
-  //     bottom: 50,
-  //   }
-  //   let height = 400;
-  //   let width = 800;
 
-  //   this.svg = d3.select("div#worldmap")
-  //     .append("svg")
-  //     .attr("width", width)
-  //     .attr("height", height)
-  //     .append("g")
-  //     .attr("transform", `translate(${margin.left},${margin.top})`);
-  // }
-
-  // private drawChart(){
-  //   let countries = topojson.feature(worldMap, worldMap.objects.countries);
-
-  //   let projection = d3.geoMercator()
-  //                       .translate([400,200]) // width/2 , height/2
-
-  //   let path = d3.geoPath().projection(projection);
-
-  //   this.svg.selectAll(".country")
-  //           .data(countries)
-  //           .enter().append("path")
-  //           .attr("class","country")
-  //           .attr("d",path)
-  // }
 
 }
