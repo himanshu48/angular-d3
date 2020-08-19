@@ -87,15 +87,39 @@ export class WorldMapComponent implements OnInit {
           .attr("stroke", "#fff")
           .attr("stroke-width", 0.5)
         .selectAll("circle")
-        .data(data
-            .filter(d => d.position)
-            .sort((a, b) => d3.descending(a.value, b.value)))
+        .data(data)
         .join("circle")
           .attr("transform", d => `translate(${d.position})`)
           .attr("r", d => radius(d.value))
         .append("title")
           .text(d => `${d.country}
     ${format(d.value)}`);
+
+
+    // this.svg.append("g").selectAll(".centroid").data(data)
+    // .enter().append("circle")
+    //   .attr("class", "centroid")
+    //   .attr("fill", "brown")
+    //   .attr("stroke", "#fff")
+    //   .attr("stroke-width", 0.5)
+    //   .attr("r", radius)
+    //   .attr("cx", function (d){ return d[0]; })
+    //   .attr("cy", function (d){ return d[1]; });
+
+// code for zoom
+//     var zoom = d3.behavior.zoom()
+//   .scaleExtent([1, 20])
+//   .on("zoom", zoomed);
+
+// var rect = svg.append("rect")
+//   .attr("width", width)
+//   .attr("height", height)
+//   .style("fill", "none")
+//   .style("pointer-events", "all")
+//   .call(zoom);
+// function zoomed(){
+//   g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+// }
 
   }
 

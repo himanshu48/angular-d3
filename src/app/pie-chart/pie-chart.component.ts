@@ -140,7 +140,33 @@ export class PieChartComponent implements OnInit {
     .attr('transform', (d) => 'translate(' + arc.centroid(d) + ')' )
     .style('font-size', '8px')
     .style('text-anchor', 'middle');
-      
+      this.createNeedle(g, radius,50)
+  }
+
+  createNeedle(g, radius, p){ // p => percentage or scale
+    let pp = p - 50;
+    let a = pp * Math.PI / (radius)
+    let x = radius * Math.sin(a)
+    let y = radius * Math.cos(a)
+    let needleLen = radius-20
+    let needleRadius = 5
+    let r1 = needleRadius * Math.sin(a)
+    let r2 = needleRadius * Math.cos(a)
+    let centerX = 0
+    let centerY = 0
+
+    let topX = centerX +x
+    let topY = centerY -y
+    
+    let leftX = centerX - r2
+    let leftY = centerY - r1
+
+    let rightX = centerX - -(r2)
+    let rightY = centerY - -(r1)
+
+    g.append('path')
+      .attr('d', `M ${leftX} ${leftY} L ${topX} ${topY} L ${rightX} ${rightY}`)
+
   }
 
   createColor(){
