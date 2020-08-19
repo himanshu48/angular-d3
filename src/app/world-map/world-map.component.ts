@@ -61,25 +61,25 @@ export class WorldMapComponent implements OnInit {
     .domain([0, d3.max(data, d => Number(d['value']))])
     .range([0, 10]);
 
-    const legend = this.svg.append("g")
-          .attr("fill", "#777")
-          .attr("transform", "translate(915,608)")
-          .attr("text-anchor", "middle")
-          .style("font", "10px sans-serif")
-        .selectAll("g")
-          .data(radius.ticks(4).slice(1))
-        .join("g");
+    // const legend = this.svg.append("g")
+    //       .attr("fill", "#777")
+    //       .attr("transform", "translate(915,608)")
+    //       .attr("text-anchor", "middle")
+    //       .style("font", "10px sans-serif")
+    //     .selectAll("g")
+    //       .data(radius.ticks(4).slice(1))
+    //     .join("g");
 
-        legend.append("circle")
-        .attr("fill", "none")
-        .attr("stroke", "#ccc")
-        .attr("cy", d => -radius(d))
-        .attr("r", radius);
+    //     legend.append("circle")
+    //     .attr("fill", "none")
+    //     .attr("stroke", "#ccc")
+    //     .attr("cy", d => -radius(d))
+    //     .attr("r", radius);
 
-        legend.append("text")
-          .attr("y", d => -2 * radius(d))
-          .attr("dy", "1.3em")
-          .text(radius.tickFormat(4, "s"));
+    //     legend.append("text")
+    //       .attr("y", d => -2 * radius(d))
+    //       .attr("dy", "1.3em")
+    //       .text(radius.tickFormat(4, "s"));
 
           this.svg.append("g")
           .attr("fill", "brown")
